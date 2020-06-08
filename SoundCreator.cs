@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace KalamaPona {
     public class SoundCreator {
         public float SampleRate {get; set;} = 48000;
-        public float Volume {get; set;} = 0.1f;
+        public float BaseVolume {get; set;} = 0.05f;
 
         public float[] AdsrEnvelope(float[] wave, float attack, float decay, float sustain, float release) {
             float[] result = new float[wave.Length];
@@ -55,30 +55,30 @@ namespace KalamaPona {
             return result;
         }
 
-        public float[] SinWave(float hz, float duration) {
+        public float[] SinWave(float hz, float duration, float volume = 1) {
             float step = (hz * 2 * MathF.PI) / SampleRate;
             float[] result = new float[(int) (SampleRate*duration)];
             for (int i = 0; i < result.Length; i++) {
-                result[i] = MathF.Sin(i*step)*Volume;
+                result[i] = MathF.Sin(i*step)*BaseVolume*volume;
             }
             return result;
         }
 
-        public float[] SquareWave(float hz, float duration) {
+        public float[] SquareWave(float hz, float duration, float volume = 1) {
             float step = (hz * 2 * MathF.PI) / SampleRate;
             float[] result = new float[(int) (SampleRate*duration)];
             for (int i = 0; i < result.Length; i++) {
-                result[i] = MathF.Sign(MathF.Sin(i*step))*Volume;
+                result[i] = MathF.Sign(MathF.Sin(i*step))*BaseVolume*volume;
             }
             return result;
         }
 
-        public float[] TriangleWave(float hz, float duration) {
+        public float[] TriangleWave(float hz, float duration, float volume = 1) {
             float period = 1/hz;
             float[] result = new float[(int) (SampleRate*duration)];
             for (int i = 0; i < result.Length; i++) {
                 float t = i/SampleRate;
-                result[i] = (2*MathF.Abs(2*(t/period-MathF.Floor(t/period+0.5f)))-1)*Volume;
+                result[i] = (2*MathF.Abs(2*(t/period-MathF.Floor(t/period+0.5f)))-1)*BaseVolume*volume;
             }
             return result;
         }
@@ -88,11 +88,15 @@ namespace KalamaPona {
             float[] result = new float[(int) (SampleRate*duration)];
             for (int i = 0; i < result.Length; i++) {
                 for (int j = 1; j < harmonics+1; j++) {
-                    float volume = Volume*(1+harmonics-j)/(1+harmonics);
+                    float volume = BaseVolume*(1+harmonics-j)/(1+harmonics);
                     result[i] += MathF.Sin(i*step*j)*volume;
                 }
             }
             return result;
+        }
+
+        public float[] Rest(float duration) {
+            return new float[(int) (SampleRate*duration)];
         }
 
         public void CreateSoundBinFile(float[] sound, string path) {
