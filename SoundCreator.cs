@@ -27,6 +27,20 @@ namespace KalamaPona {
             return result;
         }
 
+        public float[] LowPass(float[] wave, float dt, float rc) {
+            // Return RC low-pass filter output samples, given input samples,
+            // time interval dt, and time constant RC
+            //function lowpass(real[0..n] x, real dt, real RC)
+            float[] result = new float[wave.Length];
+            //var real[0..n] y
+            float alpha = dt / (rc + dt);
+            result[0] = alpha * wave[0];
+            for (int i = 1; i < wave.Length; i++) {
+                result[i] = alpha * wave[i] + (1-alpha) * result[i-1];
+            }  
+            return result;
+        }
+
         public float[] AddWaves(float[] a, float[] b) {
             int length = Math.Max(a.Length, b.Length);
             float[] result = new float[length];

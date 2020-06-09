@@ -13,7 +13,8 @@ namespace KalamaPona {
             float duration = (beats*60)/Bpm;
             var waveA = soundCreator.AverageWaves(soundCreator.SinWave(hz, duration, volume), soundCreator.SinWave(hz*2, duration, volume));
             var waveB = soundCreator.SquareWave(hz, duration, volume);
-            return soundCreator.AdsrEnvelope(soundCreator.AverageWaves(waveA, waveB), 0.1f, 0.15f, 0.7f, 0.1f);
+            return soundCreator.AdsrEnvelope(soundCreator.LowPass(soundCreator.AverageWaves(waveA, waveB), 5, 50), 0.1f, 0.15f, 0.7f, 0.1f);
+            //return soundCreator.AdsrEnvelope(soundCreator.AverageWaves(waveA, waveB), 0.1f, 0.15f, 0.7f, 0.1f);
         }
 
         public float[] CreateBassNote(float hz, float beats, float volume = 1) {

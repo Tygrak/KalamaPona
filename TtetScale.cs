@@ -10,6 +10,10 @@ namespace KalamaPona {
             ScaleNotes = scaleNotes;
         }
 
+        public override int Repetition() {
+            return ScaleNotes.Length;
+        }
+
         public override float Note(int n) {
             int octaves = n/ScaleNotes.Length;
             int note = n%ScaleNotes.Length;
